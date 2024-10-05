@@ -15,7 +15,36 @@ body, html {
     background-size: cover;
 }
 
-.my-heading {
+h1 {
     font-family: 'Qahiri', sans-serif;
-    font-size: 2rem;
+    font-size: 10rem;
+    text-align: center;
+    color: white;
+}
+
+.container {
+    text-align: center;
+}
+
+button {
+    font-size: 1.5rem; 
+    padding: 15px 30px; 
+    border: none; 
+    border-radius: 5px; 
+    background-color: #d9b5a9; 
+    color: white; 
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #bd8c8c;
+  }
+
+.button-container {
+    text-align: center;
+}
+
+.button-container button {
+    display: inline-block;
+    margin: 0 5px;
 }
