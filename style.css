@@ -28,16 +28,23 @@ h1 {
     align-items: center;
   }
 
+
+  .button-container {
+    display: flex;
+    justify-content: center; /* Center buttons inside this container */
+    align-items: center;
+}
+
 button {
     font-size: 1.5rem; 
     padding: 15px 30px; 
     border: none; 
-    border-radius: 5px; 
-    background-color: #bd8c8c; 
+    border-radius: 50px; /* Smooth, rounded buttons */
+    background-color: var(--rosy-brown); 
     color: white; 
     cursor: pointer;
-    border-radius: 50px;
-  }
+    margin: 0 20px; /* Space between the buttons */
+}
   
   button:hover {
     background-color: #d9b5a9;
