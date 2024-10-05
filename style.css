@@ -14,3 +14,8 @@ body, html {
     background-color: var(--blue-slate);
     background-size: cover;
 }
+
+.my-heading {
+    font-family: 'Qahiri', sans-serif;
+    font-size: 2rem;
+}
