@@ -1,3 +1,16 @@
 :root {
-    --blue-slate: #698A9C;
+    --space-cadet: #222838;
+    --indigo-blue: #2a3f5e;
+    --blue-slate: #698a9c;
+    --rosy-brown: #bd8c8c;
+    --silver-pink: #d9b5a9;
+    --prosecco: #eedad3;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 200%;
+    background-color: var(--blue-slate);
+    background-size: cover;
 }
