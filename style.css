@@ -22,9 +22,16 @@ h1 {
     color: white;
 }
 
-.container {
-    text-align: center;
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%; /* Ensures the container takes the full width */
+    margin-top: 20px; /* Adds some space above the buttons */
+    margin-left: 40vw;
 }
+
+
 
 button {
     font-size: 1.5rem; 
@@ -34,6 +41,7 @@ button {
     background-color: #d9b5a9; 
     color: white; 
     cursor: pointer;
+    text-align: center;
   }
   
   button:hover {
