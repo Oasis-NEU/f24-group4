@@ -22,37 +22,30 @@ h1 {
     color: white;
 }
 
-.button-container {
+.container {
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Center the buttons horizontally */
     align-items: center;
-    width: 20%; /* Ensures the container takes the full width */
-    margin-top: 20px; /* Adds some space above the buttons */
-    margin-left: 40vw;
-}
-
-
+  }
 
 button {
     font-size: 1.5rem; 
     padding: 15px 30px; 
     border: none; 
     border-radius: 5px; 
-    background-color: #d9b5a9; 
+    background-color: #bd8c8c; 
     color: white; 
     cursor: pointer;
-    text-align: center;
+    border-radius: 10px;
   }
   
   button:hover {
-    background-color: #bd8c8c;
+    background-color: #d9b5a9;
   }
 
-.button-container {
-    text-align: center;
-}
-
-.button-container button {
-    display: inline-block;
-    margin: 0 5px;
-}
+  .star-heading:after {
+    content: "\2606";
+    color: white;
+    font-size: 0.5em;
+    vertical-align: middle;
+  }
