@@ -20,6 +20,7 @@ h1 {
     font-size: 20rem;
     text-align: center;
     color: white;
+    margin-bottom:0px
 }
 
 .container {
@@ -29,11 +30,7 @@ h1 {
   }
 
 
-  .button-container {
-    display: flex;
-    justify-content: center; /* Center buttons inside this container */
-    align-items: center;
-}
+
 
 button {
     font-size: 1.5rem; 
@@ -43,7 +40,7 @@ button {
     background-color: var(--rosy-brown); 
     color: white; 
     cursor: pointer;
-    margin: 0 20px; /* Space between the buttons */
+    margin-top: 15px
 }
   
   button:hover {
