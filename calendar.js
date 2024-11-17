@@ -1,94 +1,79 @@
-const fs = require('fs');
-const { google } = require('googleapis');
-const path = require('path');
+// Include the Google API client library
+const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
-// If modifying these scopes, delete the file token.json.
-const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
-const TOKEN_PATH = path.join(__dirname, 'token.json');
-
-// Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  authorize(JSON.parse(content), listEvents);
-});
+let gapiLoaded = false;
 
 /**
- * Create an OAuth2 client with the given credentials, and then execute the
- * given callback function.
- * @param {Object} credentials The authorization client credentials.
- * @param {function} callback The callback to call with the authorized client.
+ * Load the Google API client library and initialize it.
  */
-function authorize(credentials, callback) {
-  const { client_secret, client_id, redirect_uris } = credentials.installed;
-  const oAuth2Client = new google.auth.OAuth2(
-    client_id, client_secret, redirect_uris[0]);
-
-  // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getAccessToken(oAuth2Client, callback);
-    oAuth2Client.setCredentials(JSON.parse(token));
-    callback(oAuth2Client);
-  });
-}
-
-/**
- * Get and store new token after prompting for user authorization, and then
- * execute the given callback with the authorized OAuth2 client.
- * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
- * @param {function} callback The callback for the authorized client.
- */
-function getAccessToken(oAuth2Client, callback) {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
-  console.log('Authorize this app by visiting this url:', authUrl);
-  const rl = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  rl.question('Enter the code from that page here: ', (code) => {
-    rl.close();
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error retrieving access token', err);
-      oAuth2Client.setCredentials(token);
-      // Store the token to disk for later program executions
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
+function loadGapi() {
+  if (!gapiLoaded) {
+    gapi.load('client:auth2', async () => {
+      await gapi.client.init({
+        apiKey: 'YOUR_API_KEY', // Replace with your API key
+        clientId: 'YOUR_CLIENT_ID.apps.googleusercontent.com', // Replace with your client ID
+        scope: SCOPES,
       });
-      callback(oAuth2Client);
+      gapiLoaded = true;
     });
+  }
+}
+
+/**
+ * Sign in the user upon button click.
+ */
+function handleAuthClick() {
+  if (!gapiLoaded) {
+    console.error('GAPI not loaded yet. Try again later.');
+    return;
+  }
+  gapi.auth2.getAuthInstance().signIn().then(() => {
+    listEvents();
   });
 }
 
 /**
- * Lists the next 10 events on the user's primary calendar.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
+ * Sign out the user upon button click.
  */
-function listEvents(auth) {
-  const calendar = google.calendar({ version: 'v3', auth });
-  const now = new Date().toISOString();
-  calendar.events.list(
-    {
+function handleSignoutClick() {
+  if (!gapiLoaded) {
+    console.error('GAPI not loaded yet. Try again later.');
+    return;
+  }
+  gapi.auth2.getAuthInstance().signOut();
+}
+
+/**
+ * List the next 10 events on the user's primary calendar.
+ */
+function listEvents() {
+  gapi.client.calendar.events
+    .list({
       calendarId: 'primary',
-      timeMin: now,
+      timeMin: new Date().toISOString(),
       maxResults: 10,
       singleEvents: true,
       orderBy: 'startTime',
-    },
-    (err, res) => {
-      if (err) return console.log('The API returned an error: ' + err);
-      const events = res.data.items;
+    })
+    .then((response) => {
+      const events = response.result.items;
       if (events.length) {
         console.log('Upcoming 10 events:');
-        events.map((event, i) => {
+        events.forEach((event) => {
           const start = event.start.dateTime || event.start.date;
           console.log(`${start} - ${event.summary}`);
         });
       } else {
         console.log('No upcoming events found.');
       }
-    }
-  );
+    })
+    .catch((error) => {
+      console.error('Error fetching events', error);
+    });
 }
+
+// Add event listeners to the buttons
+document.getElementById('auth-button').addEventListener('click', handleAuthClick);
+
+// Load the GAPI library when the page loads
+document.addEventListener('DOMContentLoaded', loadGapi);
