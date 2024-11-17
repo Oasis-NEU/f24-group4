@@ -19,15 +19,16 @@ body, html {
 
 h1 {
   font-family: 'Qahiri', sans-serif;
-  font-size: 4rem; /* Adjusted for better readability */
+  font-size: 20rem; /* Adjusted for better readability */
   text-align: center;
   color: white;
-  margin: 20px 0;
+  margin: 10px 0;
 }
+
 
 .A {
   font-family: 'Times New Roman', serif;
-  font-size: 2rem;
+  font-size: 6rem;
   text-align: center;
   color: white;
   margin-bottom: 20px;
@@ -42,15 +43,15 @@ h1 {
 }
 
 button {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-family: 'Times New Roman', serif;
   padding: 15px 30px;
   border: none;
-  border-radius: 50px; /* Smooth, rounded buttons */
+  border-radius: 35px; /* Smooth, rounded buttons */
   background-color: var(--rosy-brown);
   color: white;
   cursor: pointer;
-  margin-top: 20px;
+  margin-top: 0;
   transition: background-color 0.3s ease;
 }
 

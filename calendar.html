@@ -11,17 +11,39 @@
 </head>
 
 <body>
-  <p class="A">Connect your Google Calendar!</p>
+  <p class="A">connect your google calendar!</p>
   <div class="container">
-    <button id="login-button" class="button-container">Click to connect!</button>
+    <button id="login-button" class="button-container">click to connect!</button>
   </div>
 
   <!-- Next page button, initially hidden -->
-  <div id="next-page-button" style="display: none;">
-    <button id="go-to-next-page">Go to Next Page</button>
+  <div class="container">
+    <div id="next-page-button" style="display: none;">
+      <button id="go-to-next-page">go to next page</button>
+    </div>
   </div>
 
+  <!-- Script to handle the button click -->
+<script>
+  // Ensure the script runs after the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    const navigateButton = document.getElementById("go-to-next-page");
+
+    // Check if the button exists before adding the event listener
+    if (navigateButton) {
+      navigateButton.addEventListener('click', function() {
+        window.location.href = 'generate.html';
+      });
+    }
+
+    // Example: Make the button visible (remove this if handled elsewhere)
+    document.getElementById("next-page-button").style.display = "block";
+  });
+</script>
+
   <!-- Container to display events -->
-  <div id="events-container" class="events-container"></div>
+   <div class="container">
+    <div id="events-container" class="events-container"></div>
+   </div>
 </body>
 </html>
