@@ -10,9 +10,15 @@
   </head>
   
   <body>
-        <p class= "A">generate playlist!</p>
+        <p class= "A">generate your playlist!</p>
         <div class="container">
-            <button>Generate your playlist</button>
+            <button id='navigateButton'>generate</button>
+            <script>
+              const navigateButton = document.getElementById("navigateButton")
+              navigateButton.addEventListener('click', function(){
+                  window.location.href = 'playlist.html';
+              })
+          </script>
         </div>
   </body>
 </html>
