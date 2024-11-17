@@ -16,12 +16,48 @@
     <button id="login-button" class="button-container">Click to connect!</button>
   </div>
 
-  <!-- Next page button, initially hidden -->
-  <div id="next-page-button" style="display: none;">
-    <button id="go-to-next-page">Go to Next Page</button>
+  <!-- Generate Playlist Button -->
+  <div id="playlist-container" style="display: none;">
+    <button id="generate-playlist" class="button-container">Generate My Playlist</button>
   </div>
 
   <!-- Container to display events -->
   <div id="events-container" class="events-container"></div>
+
+  <!-- Script to handle playlist generation -->
+  <script>
+    document.getElementById('generate-playlist').addEventListener('click', async () => {
+      const calendarToken = localStorage.getItem('googleCalendarAccessToken');
+      const spotifyToken = localStorage.getItem('spotifyAccessToken');
+      const spotifyUserId = 'your_spotify_user_id'; // Fetch this dynamically via Spotify API
+
+      if (calendarToken && spotifyToken) {
+        await generatePlaylist(calendarToken, spotifyToken, spotifyUserId);
+      } else {
+        alert('Please connect both Google Calendar and Spotify first.');
+      }
+    });
+
+    async function generatePlaylist(calendarToken, spotifyToken, spotifyUserId) {
+      try {
+        // Fetch events and determine mood
+        const events = await listGoogleEvents(calendarToken);
+        const mood = analyzeSchedule(events);
+        console.log('Mood:', mood);
+
+        // Create Spotify playlist
+        const playlistId = await createSpotifyPlaylist(spotifyToken, spotifyUserId, mood);
+
+        // Fetch tracks and add to playlist
+        const tracks = await fetchTracksForMood(mood);
+        await addTracksToSpotifyPlaylist(spotifyToken, playlistId, tracks);
+
+        alert('Your playlist has been created!');
+      } catch (error) {
+        console.error('Error generating playlist:', error);
+        alert('Something went wrong while generating your playlist.');
+      }
+    }
+  </script>
 </body>
 </html>
