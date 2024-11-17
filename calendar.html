@@ -26,32 +26,47 @@
 
   <!-- Script to handle playlist generation -->
   <script>
+    // Function to show the "Generate Playlist" button if tokens exist
+    function showGeneratePlaylistButton() {
+      const calendarToken = localStorage.getItem('googleCalendarAccessToken');
+      const spotifyToken = localStorage.getItem('spotifyAccessToken');
+  
+      if (calendarToken && spotifyToken) {
+        document.getElementById('playlist-container').style.display = 'block';
+      }
+    }
+  
+    // Call this function after page load
+    document.addEventListener('DOMContentLoaded', showGeneratePlaylistButton);
+  
+    // Event listener for "Generate Playlist" button
     document.getElementById('generate-playlist').addEventListener('click', async () => {
       const calendarToken = localStorage.getItem('googleCalendarAccessToken');
       const spotifyToken = localStorage.getItem('spotifyAccessToken');
-      const spotifyUserId = 'your_spotify_user_id'; // Fetch this dynamically via Spotify API
-
+      const spotifyUserId = 'your_spotify_user_id'; // Fetch dynamically via Spotify API
+  
       if (calendarToken && spotifyToken) {
         await generatePlaylist(calendarToken, spotifyToken, spotifyUserId);
       } else {
         alert('Please connect both Google Calendar and Spotify first.');
       }
     });
-
+  
+    // Main function to generate the playlist
     async function generatePlaylist(calendarToken, spotifyToken, spotifyUserId) {
       try {
         // Fetch events and determine mood
         const events = await listGoogleEvents(calendarToken);
         const mood = analyzeSchedule(events);
         console.log('Mood:', mood);
-
+  
         // Create Spotify playlist
         const playlistId = await createSpotifyPlaylist(spotifyToken, spotifyUserId, mood);
-
+  
         // Fetch tracks and add to playlist
         const tracks = await fetchTracksForMood(mood);
         await addTracksToSpotifyPlaylist(spotifyToken, playlistId, tracks);
-
+  
         alert('Your playlist has been created!');
       } catch (error) {
         console.error('Error generating playlist:', error);
@@ -59,5 +74,6 @@
       }
     }
   </script>
+  
 </body>
 </html>
