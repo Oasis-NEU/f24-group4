@@ -48,11 +48,16 @@ async function handleAuthentication() {
   }
 }
 
-// Function to list the next 10 events on the user's primary calendar
+// Function to list events for one day
 async function listEvents(accessToken) {
   try {
+    // Define the start and end times for the specific day
+    const today = new Date();
+    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
+
     const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=10&singleEvents=true&orderBy=startTime&timeMin=${new Date().toISOString()}`,
+      `https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&orderBy=startTime&timeMin=${startOfDay}&timeMax=${endOfDay}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -65,7 +70,7 @@ async function listEvents(accessToken) {
     eventsContainer.innerHTML = ''; // Clear previous events
 
     if (data.items && data.items.length > 0) {
-      console.log('Upcoming 10 events:');
+      console.log('Events for today:');
       data.items.forEach((event) => {
         const start = event.start.dateTime || event.start.date;
         const eventElement = document.createElement('div');
@@ -73,8 +78,8 @@ async function listEvents(accessToken) {
         eventsContainer.appendChild(eventElement);
       });
     } else {
-      console.log('No upcoming events found.');
-      eventsContainer.textContent = 'No upcoming events found.';
+      console.log('No events found for today.');
+      eventsContainer.textContent = 'No events found for today.';
     }
   } catch (error) {
     console.error('Error fetching events:', error);
