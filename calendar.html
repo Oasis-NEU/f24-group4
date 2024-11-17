@@ -1,19 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>HTML 5 Boilerplate</title>
-    <link href="https://fonts.googleapis.com/css2?family=Qahiri&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Connect Your Google Calendar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Qahiri&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="/src/calendar.js" defer></script>
+</head>
 
-  <body>
-      <p class= "A">connect your calendar!</p>
-      <div class="container">
-        <button>Click to connect!</button>
-      </div>
+<body>
+  <p class="A">Connect your Google Calendar!</p>
+  <div class="container">
+    <button id="login-button" class="button-container">Click to connect!</button>
+  </div>
 
-  </body>
+  <!-- Container to display events -->
+  <div id="events-container" class="events-container"></div>
+
+  <!-- Include a simple script inline for testing -->
+  <script>
+    document.getElementById('login-button').addEventListener('click', () => {
+      window.location.href = '/test.html'; // Replace with any valid URL
+    });
+  </script>
+</body>
 </html>
