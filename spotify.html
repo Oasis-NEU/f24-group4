@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +7,7 @@
   <title>Connect Your Spotify</title>
   <link href="https://fonts.googleapis.com/css2?family=Qahiri&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="/src/spotify.js"></script> 
-  <script type="module" src="/src/playlists.js"></script>
+  <script type="module" src="/src/spotify.js" defer></script>
 </head>
 
 <body>
@@ -17,6 +15,10 @@
   <div class="container">
     <button id="login-button" class="button-container">Click to connect!</button>
   </div>
-</body>
 
+  <!-- Next page button, initially hidden -->
+  <div id="next-page-button" style="display: none;">
+    <button id="go-to-next-page">Go to Next Page</button>
+  </div>
+</body>
 </html>
