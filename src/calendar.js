@@ -1,35 +1,50 @@
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
-const CLIENT_ID = '79987944929-l9v1f4imvt83bbc8b080mjkff6ut82iu.apps.googleusercontent.com';
+const CLIENT_ID = '79987944929-ib5s7kotamfa74porgsv1jqhifr1n2b0.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyCekAi7h3qbfRi8Eh402GL1VC7FD2DWfRk';
-const REDIRECT_URI = window.location.origin + '/calendar.html'; // Update if needed
+const REDIRECT_URI = window.location.origin + '/calendar.html';
 
 // Function to redirect to Google login
 function connectGoogleCalendar() {
-  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${encodeURIComponent(
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
-  )}&scope=${encodeURIComponent(SCOPES)}&include_granted_scopes=true`;
+  )}&scope=${encodeURIComponent(SCOPES)}&include_granted_scopes=true&access_type=offline`;
   window.location.href = authUrl; // Redirect to Google authorization
 }
 
-// Function to handle user authentication
-function handleAuthentication() {
-  const urlParams = new URLSearchParams(window.location.hash.substring(1));
-  const accessToken = urlParams.get('access_token');
+// Function to handle user authentication and exchange authorization code for access token
+async function handleAuthentication() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const authCode = urlParams.get('code');
 
-  if (accessToken) {
-    // Store access token in localStorage (optional)
-    localStorage.setItem('googleCalendarAccessToken', accessToken);
+  if (authCode) {
+    try {
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: CLIENT_ID,
+          client_secret: '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', // Replace with actual client secret
+          code: authCode,
+          redirect_uri: REDIRECT_URI,
+          grant_type: 'authorization_code',
+        }),
+      });
 
-    // Show the "Go to Next Page" button
-    document.getElementById('next-page-button').style.display = 'block';
-    document.getElementById('login-button').style.display = 'none';
-
-    // Load events after authentication
-    listEvents(accessToken);
+      const data = await response.json();
+      if (data.access_token) {
+        console.log('Access Token:', data.access_token);
+        localStorage.setItem('googleCalendarAccessToken', data.access_token);
+        listEvents(data.access_token);
+        showNextPageButton();
+      } else {
+        console.error('Error exchanging code for token:', data);
+        alert('Authorization failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to exchange code for token:', error);
+    }
   } else {
-    // If no access token, show the login button
-    document.getElementById('login-button').style.display = 'block';
-    document.getElementById('next-page-button').style.display = 'none';
+    console.error('Authorization code not found.');
   }
 }
 
@@ -64,6 +79,14 @@ async function listEvents(accessToken) {
   } catch (error) {
     console.error('Error fetching events:', error);
     alert('Failed to fetch events. Please try again.');
+  }
+}
+
+// Function to show the "Go to Next Page" button
+function showNextPageButton() {
+  const nextPageButton = document.getElementById('next-page-button');
+  if (nextPageButton) {
+    nextPageButton.style.display = 'block';
   }
 }
 

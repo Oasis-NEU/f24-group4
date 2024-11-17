@@ -7,7 +7,7 @@
   <title>Connect Your Google Calendar</title>
   <link href="https://fonts.googleapis.com/css2?family=Qahiri&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="/src/calendar.js" defer></script>
+  <script src="/src/calendar.js" defer></script>
 </head>
 
 <body>
@@ -16,14 +16,12 @@
     <button id="login-button" class="button-container">Click to connect!</button>
   </div>
 
+  <!-- Next page button, initially hidden -->
+  <div id="next-page-button" style="display: none;">
+    <button id="go-to-next-page">Go to Next Page</button>
+  </div>
+
   <!-- Container to display events -->
   <div id="events-container" class="events-container"></div>
-
-  <!-- Include a simple script inline for testing -->
-  <script>
-    document.getElementById('login-button').addEventListener('click', () => {
-      window.location.href = '/test.html'; // Replace with any valid URL
-    });
-  </script>
 </body>
 </html>
