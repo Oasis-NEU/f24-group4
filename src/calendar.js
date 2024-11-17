@@ -14,7 +14,7 @@ function connectGoogleCalendar() {
 // Function to handle user authentication and exchange authorization code for access token
 async function handleAuthentication() {
   const urlParams = new URLSearchParams(window.location.search);
-  const authCode = urlParams.get('code');
+  const authCode = urlParams.get('code');s
 
   if (authCode) {
     try {
@@ -34,7 +34,10 @@ async function handleAuthentication() {
       if (data.access_token) {
         console.log('Access Token:', data.access_token);
         localStorage.setItem('googleCalendarAccessToken', data.access_token);
-        listEvents(data.access_token);
+        const events = await listEvents(data.access_token);
+        processPlaylistBasedOnSchedule(events);
+        const mood = analyzeSchedule(events);
+        console.log('Determined Mood:', mood); // You can pass this mood to Spotify API
         showNextPageButton();
       } else {
         console.error('Error exchanging code for token:', data);
@@ -51,7 +54,6 @@ async function handleAuthentication() {
 // Function to list events for one day
 async function listEvents(accessToken) {
   try {
-    // Define the start and end times for the specific day
     const today = new Date();
     const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
     const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
@@ -77,14 +79,31 @@ async function listEvents(accessToken) {
         eventElement.textContent = `${start} - ${event.summary}`;
         eventsContainer.appendChild(eventElement);
       });
+      return data.items; // Return events to be analyzed
     } else {
       console.log('No events found for today.');
       eventsContainer.textContent = 'No events found for today.';
+      return [];
     }
   } catch (error) {
     console.error('Error fetching events:', error);
     alert('Failed to fetch events. Please try again.');
+    return [];
   }
+}
+
+// Function to analyze the user's schedule and determine the mood
+function analyzeSchedule(events) {
+  let busyMinutes = 0;
+  events.forEach((event) => {
+    const start = new Date(event.start.dateTime || event.start.date);
+    const end = new Date(event.end.dateTime || event.end.date);
+    busyMinutes += (end - start) / (1000 * 60); // Convert milliseconds to minutes
+  });
+
+  if (busyMinutes > 240) return 'relaxing'; // More than 4 hours of events
+  if (busyMinutes > 120) return 'energetic'; // 2-4 hours of events
+  return 'chill'; // Less than 2 hours
 }
 
 // Function to show the "Go to Next Page" button
