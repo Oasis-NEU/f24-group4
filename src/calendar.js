@@ -1,6 +1,5 @@
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 const CLIENT_ID = '79987944929-ib5s7kotamfa74porgsv1jqhifr1n2b0.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyCekAi7h3qbfRi8Eh402GL1VC7FD2DWfRk';
 const REDIRECT_URI = window.location.origin + '/calendar.html';
 
 // Function to redirect to Google login
@@ -14,7 +13,7 @@ function connectGoogleCalendar() {
 // Function to handle user authentication and exchange authorization code for access token
 async function handleAuthentication() {
   const urlParams = new URLSearchParams(window.location.search);
-  const authCode = urlParams.get('code');s
+  const authCode = urlParams.get('code');
 
   if (authCode) {
     try {
@@ -34,10 +33,14 @@ async function handleAuthentication() {
       if (data.access_token) {
         console.log('Access Token:', data.access_token);
         localStorage.setItem('googleCalendarAccessToken', data.access_token);
+
         const events = await listEvents(data.access_token);
+        if (!events || events.length === 0) {
+          alert('No events found in your Google Calendar.');
+          return;
+        }
+
         processPlaylistBasedOnSchedule(events);
-        const mood = analyzeSchedule(events);
-        console.log('Determined Mood:', mood); // You can pass this mood to Spotify API
         showNextPageButton();
       } else {
         console.error('Error exchanging code for token:', data);
@@ -50,6 +53,22 @@ async function handleAuthentication() {
     console.error('Authorization code not found.');
   }
 }
+
+function analyzeSchedule(events) {
+  let busyMinutes = 0;
+
+  events.forEach((event) => {
+    const start = new Date(event.start.dateTime || event.start.date);
+    const end = new Date(event.end.dateTime || event.end.date);
+    busyMinutes += (end - start) / (1000 * 60); // Convert milliseconds to minutes
+  });
+
+  // Determine mood based on busy minutes
+  if (busyMinutes > 240) return 'relaxing'; // More than 4 hours of events
+  if (busyMinutes > 120) return 'energetic'; // Between 2 to 4 hours
+  return 'chill'; // Less than 2 hours
+}
+
 
 // Function to list events for one day
 async function listEvents(accessToken) {
@@ -67,43 +86,17 @@ async function listEvents(accessToken) {
       }
     );
 
-    const data = await response.json();
-    const eventsContainer = document.getElementById('events-container');
-    eventsContainer.innerHTML = ''; // Clear previous events
-
-    if (data.items && data.items.length > 0) {
-      console.log('Events for today:');
-      data.items.forEach((event) => {
-        const start = event.start.dateTime || event.start.date;
-        const eventElement = document.createElement('div');
-        eventElement.textContent = `${start} - ${event.summary}`;
-        eventsContainer.appendChild(eventElement);
-      });
-      return data.items; // Return events to be analyzed
-    } else {
-      console.log('No events found for today.');
-      eventsContainer.textContent = 'No events found for today.';
-      return [];
+    if (!response.ok) {
+      throw new Error(`Google Calendar API returned status ${response.status}`);
     }
+
+    const data = await response.json();
+    return data.items || [];
   } catch (error) {
-    console.error('Error fetching events:', error);
-    alert('Failed to fetch events. Please try again.');
+    console.error('Error fetching Google Calendar events:', error);
+    alert(`Failed to fetch events: ${error.message}`);
     return [];
   }
-}
-
-// Function to analyze the user's schedule and determine the mood
-function analyzeSchedule(events) {
-  let busyMinutes = 0;
-  events.forEach((event) => {
-    const start = new Date(event.start.dateTime || event.start.date);
-    const end = new Date(event.end.dateTime || event.end.date);
-    busyMinutes += (end - start) / (1000 * 60); // Convert milliseconds to minutes
-  });
-
-  if (busyMinutes > 240) return 'relaxing'; // More than 4 hours of events
-  if (busyMinutes > 120) return 'energetic'; // 2-4 hours of events
-  return 'chill'; // Less than 2 hours
 }
 
 // Function to show the "Go to Next Page" button
@@ -114,14 +107,18 @@ function showNextPageButton() {
   }
 }
 
-// Function to navigate to the next page
-function goToNextPage() {
-  window.location.href = '/next.html'; // Update with your next page URL
-}
+// Wrap event listeners in DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  const loginButton = document.getElementById('login-button');
+  if (loginButton) {
+    loginButton.addEventListener('click', connectGoogleCalendar);
+  }
 
-// Event listeners
-document.getElementById('login-button').addEventListener('click', connectGoogleCalendar);
-document.getElementById('go-to-next-page').addEventListener('click', goToNextPage);
+  const nextPageButton = document.getElementById('go-to-next-page');
+  if (nextPageButton) {
+    nextPageButton.addEventListener('click', goToNextPage);
+  }
+});
 
 // Handle authentication on page load
 window.onload = handleAuthentication;
