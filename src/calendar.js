@@ -7,7 +7,7 @@ function connectGoogleCalendar() {
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
     REDIRECT_URI
   )}&scope=${encodeURIComponent(SCOPES)}&include_granted_scopes=true&access_type=offline`;
-  window.location.href = authUrl; // Redirect to Google authorization
+  window.location.href = authUrl;
 }
 
 // Function to handle user authentication and exchange authorization code for access token
@@ -22,7 +22,7 @@ async function handleAuthentication() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           client_id: CLIENT_ID,
-          client_secret: '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', // Replace with actual client secret
+          client_secret: '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',
           code: authCode,
           redirect_uri: REDIRECT_URI,
           grant_type: 'authorization_code',
@@ -60,12 +60,12 @@ function analyzeSchedule(events) {
   events.forEach((event) => {
     const start = new Date(event.start.dateTime || event.start.date);
     const end = new Date(event.end.dateTime || event.end.date);
-    busyMinutes += (end - start) / (1000 * 60); // Convert milliseconds to minutes
+    busyMinutes += (end - start) / (1000 * 60);
   });
 
   // Determine mood based on busy minutes
-  if (busyMinutes > 240) return 'relaxing'; // More than 4 hours of events
-  if (busyMinutes > 120) return 'energetic'; // Between 2 to 4 hours
+  if (busyMinutes > 240) return 'relaxing';
+  if (busyMinutes > 120) return 'energetic';
   return 'chill'; // Less than 2 hours
 }
 
